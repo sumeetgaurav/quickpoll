@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: quickpoll-secrets
+  namespace: quickpoll
+type: Opaque
+stringData:
+  POSTGRES_USER: CHANGE_ME
+  POSTGRES_PASSWORD: CHANGE_ME
+  POSTGRES_DB: poll
+  DATABASE_URL: postgresql://CHANGE_ME:CHANGE_ME@db:5432/poll
+  REDIS_URL: redis://cache:6379

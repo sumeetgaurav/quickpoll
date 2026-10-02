@@ -2,6 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: pgdata
+  namespace: quickpoll
 spec:
   accessModes: ["ReadWriteOnce"]
   resources:
@@ -12,6 +13,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: db
+  namespace: quickpoll
 spec:
   replicas: 1
   selector:
@@ -39,6 +41,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: db
+  namespace: quickpoll
 spec:
   selector: { app: db }
   ports: [{ port: 5432, targetPort: 5432 }]
