@@ -13,8 +13,8 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: quickpoll-frontend:local
-          imagePullPolicy: IfNotPresent
+          image: sumeetgaurav/quickpoll-frontend:latest
+          imagePullPolicy: Always
           ports: [{ containerPort: 80 }]
 ---
 apiVersion: v1

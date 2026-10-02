@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: worker
-          image: quickpoll-worker:local
-          imagePullPolicy: IfNotPresent
+          image: sumeetgaurav/quickpoll-worker:latest
+          imagePullPolicy: Always
           envFrom:
             - secretRef: { name: quickpoll-secrets }

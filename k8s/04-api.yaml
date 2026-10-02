@@ -13,8 +13,8 @@ spec:
     spec:
       containers:
         - name: api
-          image: quickpoll-api:local
-          imagePullPolicy: IfNotPresent
+          image: sumeetgaurav/quickpoll-api:latest
+          imagePullPolicy: Always
           ports: [{ containerPort: 3000 }]
           envFrom:
             - secretRef: { name: quickpoll-secrets }
