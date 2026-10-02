@@ -1,0 +1,33 @@
+services:
+  frontend:
+    build: ./frontend
+    ports: ["8081:80"]
+    depends_on: [api]
+
+  api:
+    build: ./api
+    environment:
+      DATABASE_URL: postgresql://poll:poll@db:5432/poll
+      REDIS_URL: redis://cache:6379
+    depends_on: [db, cache]
+
+  worker:
+    build: ./worker
+    environment:
+      DATABASE_URL: postgresql://poll:poll@db:5432/poll
+      REDIS_URL: redis://cache:6379
+    depends_on: [db, cache]
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: poll
+      POSTGRES_PASSWORD: poll
+      POSTGRES_DB: poll
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+
+  cache:
+    image: redis:7-alpine
+
+volumes:
+  pgdata:

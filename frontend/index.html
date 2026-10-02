@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>quickpoll</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 3rem auto; padding: 0 1rem; color: #222; }
+    h1 { margin-bottom: .2rem; }
+    small { color: #666; }
+    .row { display: flex; align-items: center; gap: .75rem; margin: .8rem 0; }
+    button { width: 130px; padding: .6rem; font-size: 1rem; cursor: pointer; text-transform: capitalize; }
+    .bar-wrap { flex: 1; background: #eee; border-radius: 4px; height: 26px; position: relative; }
+    .bar { background: #3b82f6; height: 100%; border-radius: 4px; transition: width .4s; min-width: 2px; }
+    .count { width: 3rem; text-align: right; font-variant-numeric: tabular-nums; }
+    #status { margin-top: 1.5rem; }
+  </style>
+</head>
+<body>
+  <h1>quickpoll</h1>
+  <small>Which tool should every DevOps engineer learn first?</small>
+  <div id="options"></div>
+  <p id="status"><small></small></p>
+  <script>
+    const OPTIONS = ['kubernetes', 'docker', 'terraform', 'ansible'];
+    const box = document.getElementById('options');
+    const status = document.querySelector('#status small');
+
+    for (const o of OPTIONS) {
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.innerHTML = `<button data-o="${o}">${o}</button>
+        <div class="bar-wrap"><div class="bar" id="bar-${o}" style="width:0"></div></div>
+        <span class="count" id="n-${o}">0</span>`;
+      box.appendChild(row);
+    }
+
+    box.addEventListener('click', async (e) => {
+      const o = e.target.dataset && e.target.dataset.o;
+      if (!o) return;
+      await fetch('/api/vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ option: o })
+      });
+      refresh();
+    });
+
+    async function refresh() {
+      try {
+        const { results, queued } = await (await fetch('/api/results')).json();
+        const total = results.reduce((s, r) => s + r.count, 0) || 1;
+        for (const r of results) {
+          document.getElementById('n-' + r.option).textContent = r.count;
+          document.getElementById('bar-' + r.option).style.width = (r.count / total * 100) + '%';
+        }
+        status.textContent = `votes waiting in queue: ${queued}`;
+      } catch (e) { status.textContent = 'API unreachable'; }
+    }
+    refresh();
+    setInterval(refresh, 2000);
+  </script>
+</body>
+</html>
